@@ -201,8 +201,7 @@ class Node:
         out = self.server.user.run_command("forta account address")
         self.address = out["stderr"].strip()
 
-    def sla(self):
-        print(f"{FORTA_SLA}/{self.address}")
+    def sla(self):        
         answer = requests.get(f"{FORTA_SLA}/{self.address}")
         if answer.status_code == 200:
             return json.loads(answer.text)
@@ -211,6 +210,10 @@ class Node:
 
     def backup(self):
         datestr = datetime.now().strftime("%Y%m%d-%H%M%S")
-        filename = f"{self.address}_f{datestr}.tar.gz"
+        filename = f"{self.address}_{datestr}.tar.gz"
         out = self.server.user.run_command("tar zcf forta.tar.gz .forta")
         self.server.user.copy_file("forta.tar.gz", filename)
+
+    def status(self):
+        out = self.server.user.run_command("forta status")
+        return out
