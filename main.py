@@ -4,4 +4,6 @@ u = User(username="forta", keyfile="/home/ilker/.ssh/id_rsa")
 s = Server("192.168.1.240")
 n = Node(s,u)
 
-print(n.address)
+#print(n.sla()["statistics"])
+
+n.backup()
