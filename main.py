@@ -1,4 +1,5 @@
-from forta import Node, User, Server
+from forta import Node
+from linux import User, Server
 
 u = User(username="forta", keyfile="/home/ilker/.ssh/id_rsa")
 s = Server("192.168.1.240")
