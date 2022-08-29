@@ -1,44 +1,65 @@
 import paramiko
+import requests
+import json
+from scp import SCPClient
+from datetime import datetime
 
-
-"""
-
-import paramiko
-
-command = "df"
-
-# Update the next three lines with your
-# server's information
-
-host = "YOUR_IP_ADDRESS"
-username = "YOUR_LIMITED_USER_ACCOUNT"
-password = "YOUR_PASSWORD"
-
-client = paramiko.client.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-client.connect(host, username=username, password=password)
-_stdin, _stdout,_stderr = client.exec_command("df")
-print(stdout.read().decode())
-client.close()
-
-
-
-
-def key_based_connect(server):
-     host = "192.0.2.0"
-     special_account = "user1"
- pkey = paramiko.RSAKey.from_private_key_file("./id_rsa")
- client = paramiko.SSHClient()
-     policy = paramiko.AutoAddPolicy()
-          client.set_missing_host_key_policy(policy)
- client.connect(host, username=special_account, pkey=pkey)
- return client
-
-"""
+FORTA_SLA="https://api.forta.network/stats/sla/scanner"
 
 
 class User:
+    """
+    Linux user class. Username is mandatory, either provide password 
+    or the ssh key file. You can provide both, but key file will be 
+    tried first during login.
+
+    Attributes
+    ----------
+    username  : str
+       User name
+    password  : str
+       Password, optional
+    keyfile   : str
+       Ssh private key file, optional
+    client    : paramiko SSHClient
+       Client object
+    connected : boolean 
+       State of the connection
+
+    Methods
+    -------
+    key_based_connect(server)
+       Establish connection to given server object with ssh 
+       private key file. Sets client and connected attributes.
+    
+    sshclient(server)
+       Establish connection to given server. First try the key file
+       if it is given, then try the password. Sets the client and 
+       connected attributes.
+
+    copy_file(remote_file_name, local_file_name=None)
+       Copy file from server. If local file name is not given, use 
+       remote file name as local file name.
+
+    run_command(cmd)
+       Run the given command. Return stdout and stderr inside a dict.
+       Keys are "stdout" and "stderr"        
+    """
     def __init__(self, username=None, password=None, keyfile=None):
+        """
+        Constructor for User class.
+
+        Attributes
+        ----------
+        username : str
+           User name
+
+        password : str
+           Password for that user, optional.
+
+        keyfile : str
+           Path for ssh private key file, optional.
+        """
         self.username = username
         self.password = password
         self.keyfile = keyfile
@@ -46,6 +67,20 @@ class User:
         self.connected = False
 
     def key_based_connect(self, server):
+        """
+        Try establishing a connection using the ssh private key
+
+        Attributes
+        ----------
+        server : Server
+            Server object 
+
+        Returns
+        -------
+        tuple
+            Returns (state, message) tuple. State is either true or false
+            It sets the objects client and connected attributes
+        """
         if self.keyfile is not None:
             host = server.ipaddr
             pkey = paramiko.RSAKey.from_private_key_file(self.keyfile)
@@ -60,6 +95,22 @@ class User:
             return (False, "problem with connecting with the provided key file")
 
     def sshclient(self, server):
+        """
+        Try establishing a connection to given server. 
+        First try the ssh private key if it is given, otherwise use password.
+
+        Attributes
+        ----------
+        server : Server
+            Server object 
+
+        Returns
+        -------
+        tuple
+            Returns (state, message) tuple. State is either true or false
+            It sets the objects client and connected attributes
+
+        """
         state = False
         if self.keyfile is not None:
             state,  msg = self.key_based_connect(server)
@@ -69,20 +120,66 @@ class User:
                 self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 self.client.connect(server.ipaddr, username=self.username, password=self.password)
                 self.connected = True
-      
+                return (self.connected, "Connected")
             else:
-                return (False, None, "No password provided")
+                return (False, "No password provided")
+        return (False, "Neither ssh private key nor password was given") 
 
-    
+    def copy_file(self, remote_file_name, local_file_name=None):
+        """
+        Copy a file from the server.
+
+        Attributes
+        ----------
+        remote_file_name : str
+           The file name to copy. 
+
+        local_file_name : str
+           Name of local file to create
+        """
+        if local_file_name is None:
+            local_file_name = remote_file_name.split("/")[-1]
+
+        if not self.connected:
+            pass
+        else:
+            scp = SCPClient(self.client.get_transport())
+            scp.get(remote_file_name, local_file_name)
+        
+
+            
     def run_command(self, cmd):
+        """
+        Run the given command at the server.
+
+        Attributes
+        ----------
+        cmd : str
+
+        Returns
+        -------
+        dict with keys "stdout" and "stderr". Each item will be a 
+        list of strings
+    
+        Example
+        -------
+        server = Server("192.168.1.200")
+        user = User(username="ilker", password="deneme")
+        server.set_user(user)
+        out = server.user.run_command("df -h")
+
+        err = out["strerr"]
+        txt = out["stdout"]
+
+        """
         out = {}
         if self.connected:
             _stdin, _stdout,_stderr = self.client.exec_command(cmd)
             out["stdout"] = _stdout.read().decode() 
             out["stderr"] = _stderr.read().decode()
         return out
-            
-            
+
+
 class Server:
     def __init__(self, ipaddr):
         self.ipaddr = ipaddr
@@ -93,12 +190,27 @@ class Server:
 
     def connect(self):
         self.user.sshclient(self)
-        
+
+
 class Node:
     def __init__(self, server, user):
         self.address = None
         self.server = server
-        self.server.user = user
+        self.server.set_user(user)
         self.server.connect()
         out = self.server.user.run_command("forta account address")
         self.address = out["stderr"].strip()
+
+    def sla(self):
+        print(f"{FORTA_SLA}/{self.address}")
+        answer = requests.get(f"{FORTA_SLA}/{self.address}")
+        if answer.status_code == 200:
+            return json.loads(answer.text)
+        else:
+            return None
+
+    def backup(self):
+        datestr = datetime.now().strftime("%Y%m%d-%H%M%S")
+        filename = f"{self.address}_f{datestr}.tar.gz"
+        out = self.server.user.run_command("tar zcf forta.tar.gz .forta")
+        self.server.user.copy_file("forta.tar.gz", filename)
