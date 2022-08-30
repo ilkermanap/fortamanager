@@ -189,8 +189,9 @@ class Server:
     def test(self):
         self.connect()
         out = self.user.run_command("uname -a")
-        print(out)
-        if len(out["stdout"]) > 0:
-            print(out)
-            return True
-        return False
+        try:
+            if len(out["stdout"]) > 0:
+                return True
+            return False
+        except:
+            return False
