@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainDialog</class>
+ <widget class="QDialog" name="MainDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>521</width>
+    <height>536</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Nodes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnUpdateSLA">
+         <property name="text">
+          <string>Update SLA's</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnCreateNode">
+         <property name="text">
+          <string>Create Node</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QListWidget" name="listWidget">
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Server Ip Address</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Username</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit_2"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Latest Backup</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="lineEdit_3"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btnNodeSLA">
+     <property name="text">
+      <string>Latest SLA</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>btnCreateNode</sender>
+   <signal>clicked()</signal>
+   <receiver>MainDialog</receiver>
+   <slot>createNode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>442</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnNodeSLA</sender>
+   <signal>clicked()</signal>
+   <receiver>MainDialog</receiver>
+   <slot>getSLA()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>507</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnUpdateSLA</sender>
+   <signal>clicked()</signal>
+   <receiver>MainDialog</receiver>
+   <slot>updateSLAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>407</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>269</x>
+     <y>8</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>createNode()</slot>
+  <slot>getSLA()</slot>
+  <slot>updateSLAs()</slot>
+ </slots>
+</ui>

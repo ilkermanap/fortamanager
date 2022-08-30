@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NodeDialog</class>
+ <widget class="QDialog" name="NodeDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>525</width>
+    <height>200</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblIPADDR">
+       <property name="text">
+        <string>Server IP Address</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="editIPADDR"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblUsername">
+       <property name="text">
+        <string>User Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="editUsername"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblpassword">
+       <property name="text">
+        <string>Password</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="editPassword"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lblScannerAddressLabel">
+       <property name="text">
+        <string>Scanner Address</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="editScannerAddress"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="lblSSHKey">
+       <property name="text">
+        <string>SSH Private Key File</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="editSSHKeyFile">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btnSSHKey">
+       <property name="text">
+        <string>Select SSH Key  File</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnTest">
+       <property name="text">
+        <string>Test Connection</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblTest">
+       <property name="text">
+        <string>Status</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnSave">
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>btnTest</sender>
+   <signal>clicked()</signal>
+   <receiver>NodeDialog</receiver>
+   <slot>testConnection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>62</x>
+     <y>189</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSave</sender>
+   <signal>clicked()</signal>
+   <receiver>NodeDialog</receiver>
+   <slot>saveNode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>465</x>
+     <y>172</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>191</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSSHKey</sender>
+   <signal>clicked()</signal>
+   <receiver>NodeDialog</receiver>
+   <slot>sshkey()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>198</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>testConnection()</slot>
+  <slot>saveNode()</slot>
+  <slot>sshkey()</slot>
+ </slots>
+</ui>

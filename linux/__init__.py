@@ -185,3 +185,12 @@ class Server:
 
     def connect(self):
         self.user.sshclient(self)
+
+    def test(self):
+        self.connect()
+        out = self.user.run_command("uname -a")
+        print(out)
+        if len(out["stdout"]) > 0:
+            print(out)
+            return True
+        return False
